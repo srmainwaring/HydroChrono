@@ -1,23 +1,23 @@
 #include <cstdio>
 #include <filesystem>
 
-#include "chrono/solver/ChSolverPMINRES.h"
-#include "chrono/solver/ChIterativeSolverLS.h"
-#include "chrono/timestepper/ChTimestepper.h"
+#include <chrono/solver/ChSolverPMINRES.h>
+#include <chrono/solver/ChIterativeSolverLS.h>
+#include <chrono/timestepper/ChTimestepper.h>
 
-#include "chrono/physics/ChForce.h"
-#include "chrono/physics/ChLoadContainer.h"
-#include "chrono/physics/ChLoadsBody.h"
-#include "chrono/physics/ChLoad.h"
-#include "chrono/physics/ChSystemNSC.h"
-#include "chrono/physics/ChBody.h"
-#include "chrono/physics/ChBodyEasy.h"
+#include <chrono/physics/ChForce.h>
+#include <chrono/physics/ChLoadContainer.h>
+#include <chrono/physics/ChLoadsBody.h>
+#include <chrono/physics/ChLoad.h>
+#include <chrono/physics/ChSystemNSC.h>
+#include <chrono/physics/ChBody.h>
+#include <chrono/physics/ChBodyEasy.h>
 
-#include "chrono/fea/ChMeshFileLoader.h"
+#include <chrono/fea/ChMeshFileLoader.h>
 
-//#include "chrono/assets/ChPointPointDrawing.h"
-#include "chrono_irrlicht/ChIrrGUI.h"
-#include "chrono_irrlicht/ChIrrMeshTools.h"
+//#include <chrono/assets/ChPointPointDrawing.h>
+#include <chrono_irrlicht/ChIrrGUI.h>
+#include <chrono_irrlicht/ChIrrMeshTools.h>
 
 #include "H5Cpp.h"
 
@@ -187,9 +187,19 @@ private:
 // =============================================================================
 class ChLoadAddedMass : public ChLoadCustomMultiple {
 public:
-	ChLoadAddedMass(const std::vector<H5FileInfo>& file,   ///< h5 file to initialize added mass with
-					std::vector<std::shared_ptr<ChBody>>& bodies  ///< objects to apply additional inertia to
-					);     
+  /// \todo(srmainwaring) FIX
+  virtual ~ChLoadAddedMass() {}
+  /// \todo(srmainwaring) FIX
+  ChLoadAddedMass() :
+    ChLoadCustomMultiple(nullptr, nullptr)
+    // ChLoadCustomMultiple(std::make_shared<ChLoadable>())
+  {
+  }
+
+  /// \todo(srmainwaring) FIX
+	// ChLoadAddedMass(const std::vector<H5FileInfo>& file,   ///< h5 file to initialize added mass with
+	// 				std::vector<std::shared_ptr<ChBody>>& bodies  ///< objects to apply additional inertia to
+	// 				);     
 //	/// "Virtual" copy constructor (covariant return type).
 	virtual ChLoadAddedMass* Clone() const override { return new ChLoadAddedMass(*this); }
 //
