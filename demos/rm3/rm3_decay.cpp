@@ -64,6 +64,9 @@ int main(int argc, char* argv[]) {
 	//auto start = std::chrono::high_resolution_clock::now();
 	GetLog() << "Copyright (c) 2017 projectchrono.org\nChrono version: " << CHRONO_VERSION << "\n\n";
 
+  // Set path to Chrono data directory
+  SetChronoDataPath(CHRONO_DATA_DIR);
+
 	// system/solver settings
 	ChSystemNSC system;
 	system.Set_G_acc(ChVector<>(0.0, 0.0, 0.0));
@@ -84,13 +87,13 @@ int main(int argc, char* argv[]) {
 	std::vector<double> plate_heave_position;
 
 	// set up body from a mesh
-	if (!std::filesystem::exists("../../HydroChrono/demos/rm3/geometry/float_cog.obj")) {
-		std::cout << "File " << std::filesystem::absolute(GetChronoDataFile("../../HydroChrono/demos/rm3/geometry/float.obj").c_str()) << " does not exist" << std::endl;
+	if (!std::filesystem::exists(GetChronoDataFile("./HydroChrono/demos/rm3/geometry/float_cog.obj"))) {
+		std::cout << "File " << std::filesystem::absolute(GetChronoDataFile("./HydroChrono/demos/rm3/geometry/float.obj").c_str()) << " does not exist" << std::endl;
 		return 0;
 	}
 	//std::cout << "Attempting to open mesh file: " << std::filesystem::absolute(GetChronoDataFile("../../HydroChrono/meshFiles/float.obj").c_str()) << std::endl;
 	std::shared_ptr<ChBody> float_body1 = chrono_types::make_shared<ChBodyEasyMesh>(                   //
-		GetChronoDataFile("../../HydroChrono/demos/rm3/geometry/float_cog.obj").c_str(),                 // file name
+		GetChronoDataFile("./HydroChrono/demos/rm3/geometry/float_cog.obj").c_str(),                 // file name
 		0,                                                                                        // density
 		false,                                                                                    // do not evaluate mass automatically
 		true,                                                                                     // create visualization asset
@@ -100,14 +103,14 @@ int main(int argc, char* argv[]) {
 		);
 
 	// set up body from a mesh
-	if (!std::filesystem::exists("../../HydroChrono/demos/rm3/geometry/plate_cog.obj")) {
-		std::cout << "File " << std::filesystem::absolute(GetChronoDataFile("../../HydroChrono/demos/rm3/geometry/plate.obj").c_str()) << " does not exist" << std::endl;
+	if (!std::filesystem::exists(GetChronoDataFile("./HydroChrono/demos/rm3/geometry/plate_cog.obj"))) {
+		std::cout << "File " << std::filesystem::absolute(GetChronoDataFile("./HydroChrono/demos/rm3/geometry/plate.obj").c_str()) << " does not exist" << std::endl;
 		return 0;
 	}
 
 	//std::cout << "Attempting to open mesh file: " << std::filesystem::absolute(GetChronoDataFile("../../HydroChrono/meshFiles/plate.obj").c_str()) << std::endl;
 	std::shared_ptr<ChBody> plate_body2 = chrono_types::make_shared<ChBodyEasyMesh>(                   //
-		GetChronoDataFile("../../HydroChrono/demos/rm3/geometry/plate_cog.obj").c_str(),                 // file name
+		GetChronoDataFile("./HydroChrono/demos/rm3/geometry/plate_cog.obj").c_str(),                 // file name
 		0,                                                                                        // density
 		false,                                                                                    // do not evaluate mass automatically
 		true,                                                                                     // create visualization asset
@@ -152,7 +155,9 @@ int main(int argc, char* argv[]) {
 	std::vector<std::shared_ptr<ChBody>> bodies;
 	bodies.push_back(float_body1);
 	bodies.push_back(plate_body2);
-	TestHydro blah(bodies, "../../HydroChrono/demos/rm3/hydroData/rm3.h5", my_hydro_inputs);
+	TestHydro blah(bodies,
+    GetChronoDataFile("./HydroChrono/demos/rm3/hydroData/rm3.h5"),
+    my_hydro_inputs);
 
 	//// Debug printing added mass matrix and system mass matrix
 	//ChSparseMatrix M;
@@ -176,7 +181,7 @@ int main(int argc, char* argv[]) {
 		irrlichtVis->AddTypicalLights();
 
 		// add play/pause button
-		bool buttonPressed = false;
+		bool buttonPressed = true;
 		MyActionReceiver receiver(irrlichtVis.get(), buttonPressed);
 		irrlichtVis->AddUserEventReceiver(&receiver);
 

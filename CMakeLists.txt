@@ -52,6 +52,7 @@ set(IRRLICHT_LIBRARY_DIRS "/usr/local/opt/irrlicht/lib")
 message("IRRLICHT_INCLUDE_DIRS: ${IRRLICHT_INCLUDE_DIRS}")
 message("IRRLICHT_LIBRARY_DIRS: ${IRRLICHT_LIBRARY_DIRS}")
 
+add_compile_definitions(CHRONO_DATA_DIR="/Users/rhys/Code/chrono/chrono_ws/install/share/chrono/data/")
 
 #find_package(SWIG REQUIRED)
 #find_package(PythonLibs)
@@ -173,7 +174,7 @@ target_include_directories(rm3_reg_waves
     src
 )
 
-# install
+# install libs
 install(
   TARGETS
     HydroChrono
@@ -182,6 +183,15 @@ install(
     rm3_decay
     rm3_reg_waves
   DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+)
+
+# install data
+message("Installing data to: ${CMAKE_INSTALL_PREFIX}/share/chrono/data/HydroChrono/demos")
+install(
+  DIRECTORY
+    demos/rm3
+    demos/sphere
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/chrono/data/HydroChrono/demos
 )
 
 #SWIG_ADD_LIBRARY(py_wec_chrono LANGUAGE python SOURCES hydro_forces_no_viz.i)

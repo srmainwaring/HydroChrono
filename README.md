@@ -57,3 +57,16 @@
 		* demos/sphere/geometry - .obj files defining verticies on sphere object
 		* demos/sphere/hydroData - contains sphere.h5 file
 		* demos/sphere/postprocessing - contains .plt and .py plotting files and WEC-Sim comparison data for plots. Copy these into results folder to plot demo outputs
+
+
+## Build macOS
+
+Using colcon for the build:
+
+```zsh
+colcon build --symlink-install --merge-install --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_CXX_STANDARD=17 -DCMAKE_MACOSX_RPATH=FALSE -DCMAKE_INSTALL_NAME_DIR=$(pwd)/install/lib -DENABLE_MODULE_IRRLICHT=ON -DENABLE_MODULE_POSTPROCESS=ON --packages-select Chrono HydroChrono
+```
+
+Install data files to `~/chrono_ws/install/share/chrono/data/HydroChrono/`
+
+

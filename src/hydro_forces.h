@@ -31,8 +31,8 @@ public:
 	bool printed = false;
 	H5FileInfo();
 	H5FileInfo(std::string file, std::string body_name);
-	H5FileInfo(H5FileInfo& old);
-	H5FileInfo& operator = (H5FileInfo& rhs);
+	H5FileInfo(const H5FileInfo& old);
+	H5FileInfo& operator = (const H5FileInfo& rhs);
 	void InitScalar(H5::H5File& file, std::string data_name, double& var);
 	void Init1D(H5::H5File& file, std::string data_name, std::vector<double>& var);
 	void Init2D(H5::H5File& file, std::string data_name, ChMatrixDynamic<double>& var); 
@@ -187,16 +187,10 @@ private:
 // =============================================================================
 class ChLoadAddedMass : public ChLoadCustomMultiple {
 public:
-  /// \todo(srmainwaring) FIX
-  virtual ~ChLoadAddedMass() {}
-  /// \todo(srmainwaring) FIX
-  ChLoadAddedMass() :
-    ChLoadCustomMultiple(nullptr, nullptr)
-    // ChLoadCustomMultiple(std::make_shared<ChLoadable>())
-  {
-  }
+	ChLoadAddedMass(const std::vector<H5FileInfo>& file,    ///< h5 file to initialize added mass with
+    std::vector<std::shared_ptr<ChLoadable>>& mloadables  ///< objects to apply additional inertia to
+  );
 
-  /// \todo(srmainwaring) FIX
 	// ChLoadAddedMass(const std::vector<H5FileInfo>& file,   ///< h5 file to initialize added mass with
 	// 				std::vector<std::shared_ptr<ChBody>>& bodies  ///< objects to apply additional inertia to
 	// 				);     

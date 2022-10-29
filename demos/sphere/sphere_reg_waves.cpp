@@ -65,6 +65,9 @@ private:
 int main(int argc, char* argv[]) {
 	GetLog() << "Chrono version: " << CHRONO_VERSION << "\n\n";
 
+  // Set path to Chrono data directory
+  SetChronoDataPath(CHRONO_DATA_DIR);
+
 	// system/solver settings
 	ChSystemNSC system;
 	system.Set_G_acc(ChVector<>(0, 0, 0));
@@ -91,9 +94,10 @@ int main(int argc, char* argv[]) {
 	std::vector<double> heave_position;
 
 	// set up body from a mesh
-	std::cout << "Attempting to open mesh file: " << std::filesystem::absolute(GetChronoDataFile("../../HydroChrono/demos/sphere/geometry/oes_task10_sphere.obj").c_str()) << std::endl;
+	std::cout << "Attempting to open mesh file: " << std::filesystem::absolute(GetChronoDataFile(
+    "./HydroChrono/demos/sphere/geometry/oes_task10_sphere.obj").c_str()) << std::endl;
 	std::shared_ptr<ChBody> sphereBody = chrono_types::make_shared<ChBodyEasyMesh>(       //
-		GetChronoDataFile("../../HydroChrono/demos/sphere/geometry/oes_task10_sphere.obj").c_str(),    // file name
+		GetChronoDataFile("./HydroChrono/demos/sphere/geometry/oes_task10_sphere.obj").c_str(),    // file name
 		1000,                                                                             // density
 		false,                                                                            // do not evaluate mass automatically
 		true,                                                                             // create visualization asset
@@ -135,7 +139,9 @@ int main(int argc, char* argv[]) {
 
 	std::vector<std::shared_ptr<ChBody>> bodies;
 	bodies.push_back(sphereBody);
-	TestHydro blah(bodies, "../../HydroChrono/demos/sphere/hydroData/sphere.h5", my_hydro_inputs);
+	TestHydro blah(bodies,
+    GetChronoDataFile("./HydroChrono/demos/sphere/hydroData/sphere.h5"),
+    my_hydro_inputs);
 
 	// for profiling
 	auto start = std::chrono::high_resolution_clock::now();
@@ -154,7 +160,7 @@ int main(int argc, char* argv[]) {
 		irrlichtVis->AddTypicalLights();
 
 		// add play/pause button
-		bool buttonPressed = false;
+		bool buttonPressed = true;
 		MyActionReceiver receiver(irrlichtVis.get(), buttonPressed);
 		irrlichtVis->AddUserEventReceiver(&receiver);
 

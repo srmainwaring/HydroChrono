@@ -33,7 +33,7 @@ H5FileInfo::H5FileInfo(std::string file, std::string Name) {
 * H5FileInfo copy constructor (H5FileInfo& rhs)
 * defines basic copy constructor using the = operator
 *******************************************************************************/
-H5FileInfo::H5FileInfo(H5FileInfo& old) {
+H5FileInfo::H5FileInfo(const H5FileInfo& old) {
 	*this = old;
 }
 
@@ -42,7 +42,7 @@ H5FileInfo::H5FileInfo(H5FileInfo& old) {
 * defines = operator, sets the left object = to right object (*this = rhs)
 * returns *this
 *******************************************************************************/
-H5FileInfo& H5FileInfo::operator = (H5FileInfo& rhs) {
+H5FileInfo& H5FileInfo::operator = (const H5FileInfo& rhs) {
 	printed = rhs.printed;
 	cg = rhs.cg;
 	cb = rhs.cb;
@@ -554,6 +554,9 @@ void ForceFunc6d::SetTorque() {
 	body->AddForce(chrono_torque);
 }
 
+// declaration
+std::vector<std::shared_ptr<ChLoadable>> constructorHelper(std::vector<std::shared_ptr<ChBody>>& bodies);
+
 // =============================================================================
 // TestHydro Class Definitions
 // =============================================================================
@@ -579,10 +582,7 @@ TestHydro::TestHydro(std::vector<std::shared_ptr<ChBody>> user_bodies, std::stri
 	bodies = user_bodies; // 0 indexed
 	num_bodies = bodies.size();
 	for (int b = 0; b < num_bodies; b++) {
-    /// \todo(srmainwaring) FIX
-    H5FileInfo fi(h5_file_name, bodies[b]->GetNameString());
-		// file_info.push_back(fi);
-    // file_info.emplace_back(h5_file_name, bodies[b]->GetNameString()); // set up vector of file infos for each body
+    file_info.emplace_back(h5_file_name, bodies[b]->GetNameString()); // set up vector of file infos for each body
 	}
 	// set up time vector (should be the same for each body, so just use the first always)
 	rirf_time_vector = file_info[0].GetRIRFTimeVector();
@@ -617,7 +617,8 @@ TestHydro::TestHydro(std::vector<std::shared_ptr<ChBody>> user_bodies, std::stri
 	// added mass info
 	my_loadcontainer = chrono_types::make_shared<ChLoadContainer>();
   /// \todo(srmainwaring) FIX
-	// my_loadbodyinertia = chrono_types::make_shared<ChLoadAddedMass>(file_info, bodies);
+  auto mloadables = constructorHelper(bodies);
+	my_loadbodyinertia = chrono_types::make_shared<ChLoadAddedMass>(file_info, mloadables);
 	bodies[0]->GetSystem()->Add(my_loadcontainer);
 	my_loadcontainer->Add(my_loadbodyinertia);
 
@@ -992,16 +993,24 @@ void ChLoadAddedMass::AssembleSystemAddedMassMat() {
 * ChLoadAddedMass constructor
 * initializes body to have load applied to and added mass matrix from h5 file object
 *******************************************************************************/
-/// \todo(srmainwaring) FIX
-#if 0
-ChLoadAddedMass::ChLoadAddedMass(const std::vector<H5FileInfo>& user_h5_body_data,
-								 std::vector<std::shared_ptr<ChBody>>& bodies)
-								     : ChLoadCustomMultiple(constructorHelper(bodies)) { ///< calls ChLoadCustomMultiple to link loads to bodies
+ChLoadAddedMass::ChLoadAddedMass(
+    const std::vector<H5FileInfo>& user_h5_body_data,
+    std::vector<std::shared_ptr<ChLoadable>>& bodies)
+    : ChLoadCustomMultiple(bodies) { ///< calls ChLoadCustomMultiple to link loads to bodies
 	nBodies = bodies.size();
 	h5_body_data = user_h5_body_data;
 	AssembleSystemAddedMassMat();
 }
-#endif
+
+// ChLoadAddedMass::ChLoadAddedMass(
+//     const std::vector<H5FileInfo>& user_h5_body_data,
+//     std::vector<std::shared_ptr<ChBody>>& bodies)
+//     : ChLoadCustomMultiple(constructorHelper(bodies)) { ///< calls ChLoadCustomMultiple to link loads to bodies
+// 	nBodies = bodies.size();
+// 	h5_body_data = user_h5_body_data;
+// 	AssembleSystemAddedMassMat();
+// }
+
 /*******************************************************************************
 * ChLoadAddedMass::ComputeJacobian()
 * Computes Jacobian for load, in this case just the mass matrix is initialized
